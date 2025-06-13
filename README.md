@@ -33,7 +33,7 @@ Users can create structured events using:
 
 > The backend handles insertion into the SQLite database with strict validations.
 
-📂 _Screenshot placeholder:_ `images/create_event.png`
+![Create Event Interface](images/create_event.png)
 
 ---
 
@@ -45,7 +45,7 @@ Displays all active events using dynamic SQL querying, with automatic exclusion 
 - 🔗 Register & 📍 Location buttons open in new tabs  
 - Clean layout with 3 events per row
 
-📂 _Screenshot placeholder:_ `images/view_events.png`
+![View Events Page](images/view_events.png)
 
 ### 🔄 SQL Features:
 - Dynamic `SELECT` queries  
@@ -65,7 +65,7 @@ Real-time substring search with:
 
 Filters are applied using efficient SQL `WHERE` clauses and dynamically updated without page reload.
 
-📂 _Screenshot placeholder:_ `images/search_events.png`
+![Search Events Interface](images/search_events.png)
 
 ---
 
@@ -78,8 +78,8 @@ A personal dashboard for event management:
 - Pre-filled forms for edits  
 - Account Deletion (with password re-auth)
 
-📂 _Screenshot placeholder:_ `images/my_events.png`  
-📂 _Screenshot placeholder:_ `images/edit_event.png`
+![My Events Dashboard](images/my_events.png)  
+![Edit Event Form](images/edit_event.png)
 
 ### 🛠️ SQL Learning Points:
 - `UPDATE` and `DELETE` operations  
