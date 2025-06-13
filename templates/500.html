@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - ATYA Campus Connect{% endblock %}
+
+{% block extra_css %}
+<style>
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    text-align: center;
+    padding: 2rem;
+}
+
+.error-icon {
+    font-size: 6rem;
+    color: var(--danger);
+    margin-bottom: 2rem;
+    opacity: 0.8;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.error-code {
+    font-size: 4rem;
+    font-weight: bold;
+    color: var(--danger);
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.error-title {
+    font-size: 2rem;
+    color: var(--black);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.error-message {
+    font-size: 1.1rem;
+    color: var(--gray-600);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    line-height: 1.6;
+}
+
+.error-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.error-actions .btn {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+}
+
+.tech-details {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 2rem;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.tech-details h3 {
+    color: var(--danger);
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tech-details ul {
+    text-align: left;
+    color: var(--gray-700);
+    line-height: 1.6;
+}
+
+.tech-details li {
+    margin-bottom: 0.5rem;
+}
+
+.refresh-timer {
+    background: var(--light-purple);
+    color: var(--primary-purple);
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    margin-top: 2rem;
+    font-weight: 500;
+}
+
+.support-info {
+    background: var(--gray-50);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 2rem;
+    max-width: 500px;
+    width: 100%;
+}
+
+.support-info h3 {
+    color: var(--primary-purple);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.support-info p {
+    color: var(--gray-700);
+    margin-bottom: 1rem;
+}
+
+.support-contact {
+    background: var(--white);
+    border: 1px solid var(--primary-purple);
+    color: var(--primary-purple);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.support-contact:hover {
+    background: var(--primary-purple);
+    color: var(--white);
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .error-icon {
+        font-size: 4rem;
+    }
+    
+    .error-code {
+        font-size: 3rem;
+    }
+    
+    .error-title {
+        font-size: 1.5rem;
+    }
+    
+    .error-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .error-actions .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .tech-details,
+    .support-info {
+        padding: 1.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    
+    <div class="error-code">500</div>
+    
+    <h1 class="error-title">Internal Server Error</h1>
+    
+    <p class="error-message">
+        Something went wrong on our end. We're experiencing technical difficulties 
+        and our team has been notified. Please try again in a few moments.
+    </p>
+    
+    <div class="error-actions">
+        <button onclick="location.reload()" class="btn btn-primary">
+            <i class="fas fa-redo"></i>
+            Try Again
+        </button>
+        
+        {% if session.user_id %}
+            <a href="{{ url_for('view_events') }}" class="btn btn-outline">
+                <i class="fas fa-home"></i>
+                Go to Dashboard
+            </a>
+        {% else %}
+            <a href="{{ url_for('login') }}" class="btn btn-outline">
+                <i class="fas fa-sign-in-alt"></i>
+                Go to Login
+            </a>
+        {% endif %}
+    </div>
+    
+    <div class="refresh-timer" id="refreshTimer" style="display: none;">
+        <i class="fas fa-clock"></i>
+        <span>Auto-refreshing in <span id="countdown">30</span> seconds...</span>
+    </div>
+    
+    <div class="tech-details">
+        <h3>
+            <i class="fas fa-cog"></i>
+            What can you do?
+        </h3>
+        <ul>
+            <li>Wait a few minutes and try refreshing the page</li>
+            <li>Check if you have a stable internet connection</li>
+            <li>Try navigating to a different page and come back</li>
+            <li>Clear your browser cache and cookies</li>
+            <li>If the problem persists, contact our support team</li>
+        </ul>
+    </div>
+    
+    <div class="support-info">
+        <h3>
+            <i class="fas fa-life-ring"></i>
+            Need Help?
+        </h3>
+        <p>
+            If this error continues to occur, please report it to our technical team. 
+            Include details about what you were trying to do when this error occurred.
+        </p>
+        <a href="mailto:support@atyacampusconnect.com?subject=Server Error Report - 500" class="support-contact">
+            <i class="fas fa-envelope"></i>
+            Report Issue
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-refresh functionality
+    let countdown = 30;
+    const refreshTimer = document.getElementById('refreshTimer');
+    const countdownElement = document.getElementById('countdown');
+    
+    if (refreshTimer && countdownElement) {
+        // Show timer after 5 seconds
+        setTimeout(() => {
+            refreshTimer.style.display = 'block';
+            
+            const timer = setInterval(() => {
+                countdown--;
+                countdownElement.textContent = countdown;
+                
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    location.reload();
+                }
+            }, 1000);
+            
+            // Cancel auto-refresh if user interacts with page
+            const cancelAutoRefresh = () => {
+                clearInterval(timer);
+                refreshTimer.style.display = 'none';
+            };
+            
+            document.addEventListener('click', cancelAutoRefresh, { once: true });
+            document.addEventListener('keydown', cancelAutoRefresh, { once: true });
+            
+        }, 5000);
+    }
+    
+    // Add error reporting functionality
+    const supportContact = document.querySelector('.support-contact');
+    if (supportContact) {
+        supportContact.addEventListener('click', function(e) {
+            // Add current URL and timestamp to email
+            const currentUrl = window.location.href;
+            const timestamp = new Date().toISOString();
+            const userAgent = navigator.userAgent;
+            
+            const emailBody = `
+Error Details:
+- URL: ${currentUrl}
+- Time: ${timestamp}
+- Browser: ${userAgent}
+- User ID: ${session.user_id || 'Not logged in'}
+
+Please describe what you were trying to do when this error occurred:
+[Your description here]
+            `.trim();
+            
+            const emailSubject = 'Server Error Report - 500';
+            const mailto = `mailto:support@atyacampusconnect.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+            
+            this.href = mailto;
+        });
+    }
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // R key to refresh
+        if (e.key === 'r' || e.key === 'R') {
+            if (!e.ctrlKey && !e.metaKey) { // Avoid conflict with Ctrl+R
+                location.reload();
+            }
+        }
+        
+        // H key to go home
+        if (e.key === 'h' || e.key === 'H') {
+            {% if session.user_id %}
+                window.location.href = "{{ url_for('view_events') }}";
+            {% else %}
+                window.location.href = "{{ url_for('login') }}";
+            {% endif %}
+        }
+    });
+    
+    // Show keyboard shortcuts hint
+    setTimeout(() => {
+        if (window.ATYAUtils) {
+            window.ATYAUtils.showFlashMessage('Tip: Press "R" to refresh or "H" to go home', 'info');
+        }
+    }, 3000);
+});
+</script>
+{% endblock %}

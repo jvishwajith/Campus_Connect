@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Page Not Found - ATYA Campus Connect{% endblock %}
+
+{% block extra_css %}
+<style>
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    text-align: center;
+    padding: 2rem;
+}
+
+.error-icon {
+    font-size: 6rem;
+    color: var(--primary-purple);
+    margin-bottom: 2rem;
+    opacity: 0.8;
+}
+
+.error-code {
+    font-size: 4rem;
+    font-weight: bold;
+    color: var(--primary-purple);
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.error-title {
+    font-size: 2rem;
+    color: var(--black);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.error-message {
+    font-size: 1.1rem;
+    color: var(--gray-600);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    line-height: 1.6;
+}
+
+.error-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.error-actions .btn {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+}
+
+.search-suggestion {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 3rem;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.search-suggestion h3 {
+    color: var(--primary-purple);
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+.quick-search {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.quick-search input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.quick-search button {
+    background: var(--primary-purple);
+    color: var(--white);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.quick-search button:hover {
+    background: var(--secondary-purple);
+}
+
+@media (max-width: 768px) {
+    .error-icon {
+        font-size: 4rem;
+    }
+    
+    .error-code {
+        font-size: 3rem;
+    }
+    
+    .error-title {
+        font-size: 1.5rem;
+    }
+    
+    .error-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .error-actions .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .quick-search {
+        flex-direction: column;
+    }
+    
+    .search-suggestion {
+        padding: 1.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-icon">
+        <i class="fas fa-search"></i>
+    </div>
+    
+    <div class="error-code">404</div>
+    
+    <h1 class="error-title">Page Not Found</h1>
+    
+    <p class="error-message">
+        Oops! The page you're looking for doesn't exist. It might have been moved, deleted, 
+        or you entered the wrong URL. Don't worry, it happens to the best of us!
+    </p>
+    
+    <div class="error-actions">
+        {% if session.user_id %}
+            <a href="{{ url_for('view_events') }}" class="btn btn-primary">
+                <i class="fas fa-calendar-day"></i>
+                View Events
+            </a>
+            <a href="{{ url_for('search_events') }}" class="btn btn-outline">
+                <i class="fas fa-search"></i>
+                Search Events
+            </a>
+        {% else %}
+            <a href="{{ url_for('login') }}" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt"></i>
+                Go to Login
+            </a>
+            <a href="{{ url_for('register') }}" class="btn btn-outline">
+                <i class="fas fa-user-plus"></i>
+                Register
+            </a>
+        {% endif %}
+    </div>
+    
+    {% if session.user_id %}
+    <div class="search-suggestion">
+        <h3>
+            <i class="fas fa-lightbulb"></i>
+            Looking for something specific?
+        </h3>
+        <p>Try searching for events that interest you:</p>
+        
+        <form action="{{ url_for('search_events') }}" method="GET" class="quick-search">
+            <input type="text" name="q" placeholder="Search for events..." required>
+            <button type="submit">
+                <i class="fas fa-search"></i>
+                Search
+            </button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add some animation to the icon
+    const errorIcon = document.querySelector('.error-icon i');
+    if (errorIcon) {
+        setInterval(() => {
+            errorIcon.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                errorIcon.style.transform = 'scale(1)';
+            }, 200);
+        }, 3000);
+    }
+    
+    // Focus on search input if present
+    const searchInput = document.querySelector('.quick-search input');
+    if (searchInput) {
+        setTimeout(() => searchInput.focus(), 500);
+    }
+});
+</script>
+{% endblock %}

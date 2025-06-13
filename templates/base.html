@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ATYA - Campus Connect{% endblock %}</title>
+
+    <!-- ✅ Add Google Font (e.g., Poppins) here -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Existing Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    {% if session.user_id %}
+    <!-- Sidebar for authenticated users -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-with-logo">
+                <img src="{{ url_for('static', filename='images/sidebar.jpg') }}" alt="Logo" class="sidebar-logo">
+                <div class="brand-text">
+                    <h1>Atya</h1>
+                    <p>Campus Connect</p>
+                </div>
+            </div>
+
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <ul>
+                <li>
+                    <a href="{{ url_for('view_events') }}" class="nav-link {% if request.endpoint == 'view_events' %}active{% endif %}">
+                        <i class="fas fa-calendar-day"></i>
+                        <span>View Events</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('search_events') }}" class="nav-link {% if request.endpoint == 'search_events' %}active{% endif %}">
+                        <i class="fas fa-search"></i>
+                        <span>Search Event</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('create_event') }}" class="nav-link {% if request.endpoint == 'create_event' %}active{% endif %}">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Create Event</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('profile') }}" class="nav-link {% if request.endpoint == 'profile' %}active{% endif %}">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <a href="{{ url_for('logout') }}" class="nav-link logout-link">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main content area -->
+    <div class="main-content" id="mainContent">
+        <div class="content-header">
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-details">
+                    <span class="user-name">{{ session.user_name }}</span>
+                    <small class="user-college">{{ session.college_name }}</small>
+                </div>
+            </div>
+        </div>
+    {% else %}
+    <!-- No sidebar for unauthenticated pages -->
+    <div class="auth-page">
+        <div class="auth-brand">
+            <h1>Atya</h1>
+            <p>Campus Connect</p>
+        </div>
+    {% endif %}
+    
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        <span>{{ message }}</span>
+                        <button class="flash-close" onclick="this.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Page content -->
+    <div class="page-content">
+        {% block content %}{% endblock %}
+    </div>
+    
+    {% if session.user_id %}
+    </div> <!-- Close main-content -->
+    {% else %}
+    </div> <!-- Close auth-page -->
+    {% endif %}
+    
+    <!-- Base JavaScript -->
+    <script src="{{ url_for('static', filename='js/base.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

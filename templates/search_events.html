@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<!-- Add Google Fonts here -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- Your existing stylesheet -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/events.css') }}">
+{% endblock %}
+
+
+{% block content %}
+<div class="search-header">
+    <h1>Search Events</h1>
+    <form method="GET" class="search-form">
+        <div class="search-input-group">
+            <input type="text" name="q" placeholder="Search events by name..." 
+                   value="{{ query or '' }}" class="search-input">
+            <button type="submit" class="search-btn">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        
+        <button type="button" class="filter-toggle" id="filterToggle">
+            <i class="fas fa-filter"></i>
+            Advanced Filters
+        </button>
+        
+        <div class="filter-panel" id="filterPanel">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="college_filter">College:</label>
+                    <select name="college_filter" id="college_filter">
+                        <option value="">All Colleges</option>
+                        {% for college in colleges %}
+                            <option value="{{ college }}" {% if selected_college == college %}selected{% endif %}>
+                                {{ college }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="category_filter">Categories:</label>
+                    <div class="custom-multiselect" id="categoryMultiselect">
+                        <div class="multiselect-selected" onclick="toggleDropdown('categoryMultiselect')">
+                            <span class="selected-text">All Categories</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="multiselect-options">
+                            {% for category in categories %}
+                                <label class="multiselect-option">
+                                    <input type="checkbox" name="category_filter" value="{{ category }}" 
+                                        {% if category in selected_categories %}checked{% endif %}
+                                        onchange="updateSelectedText('categoryMultiselect')">
+                                    <span>{{ category }}</span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="date_from">From Date:</label>
+                    <input type="date" name="date_from" id="date_from" value="{{ date_from or '' }}">
+                </div>
+                
+                <div class="filter-group">
+                    <label for="date_to">To Date:</label>
+                    <input type="date" name="date_to" id="date_to" value="{{ date_to or '' }}">
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="search-results">
+    {% if query %}
+        <div class="results-info">
+            <h2>Search Results for "{{ query }}"</h2>
+            <span class="results-count">{{ events|length }} event(s) found</span>
+        </div>
+    {% endif %}
+    
+    <div class="events-grid">
+        {% if events %}
+            {% for event in events %}
+                <div class="event-card">
+                    <div class="event-header">
+                        <h3 class="event-title">{{ event.event_name }}</h3>
+                        <span class="event-category">{{ event.category }}</span>
+                    </div>
+                    
+                    <div class="event-body">
+                        <p class="event-description">{{ event.description }}</p>
+                        
+                        <div class="event-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>{{ event.formatted_date }}</span>
+                            </div>
+                            
+                            <div class="meta-item">
+                                <i class="fas fa-university"></i>
+                                <span>{{ event.college_name }}</span>
+                            </div>
+                            
+                            {% if event.requirements %}
+                                <div class="meta-item">
+                                    <i class="fas fa-tools"></i>
+                                    <span>{{ event.requirements }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="event-footer">
+                        <a href="{{ event.location }}" target="_blank" class="btn btn-outline">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Location
+                        </a>
+                        <a href="{{ event.registration_link }}" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-external-link-alt"></i>
+                            Register
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% elif query %}
+            <div class="no-events">
+                <i class="fas fa-search"></i>
+                <h3>No Events Found</h3>
+                <p>No events match your search term "{{ query }}". Try different keywords or check your spelling.</p>
+            </div>
+        {% else %}
+            <div class="no-search">
+                <i class="fas fa-search"></i>
+                <h3>Search for Events</h3>
+                <p>Enter a search term above to find events by name.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/events.js') }}"></script>
+{% endblock %}

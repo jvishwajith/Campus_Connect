@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<!-- Add Google Fonts here -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- Your existing stylesheet -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/events.css') }}">
+{% endblock %}
+
+
+{% block content %}
+<div class="events-header">
+    <h1>All Events</h1>
+    <button class="filter-toggle" id="filterToggle">
+        <i class="fas fa-filter"></i>
+        Filters
+    </button>
+</div>
+
+<div class="filter-panel" id="filterPanel">
+    <form method="GET" class="filter-form">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label for="college_filter">College:</label>
+                <select name="college_filter" id="college_filter">
+                    <option value="">All Colleges</option>
+                    {% for college in colleges %}
+                        <option value="{{ college }}" {% if selected_college == college %}selected{% endif %}>
+                            {{ college }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="category_filter">Categories:</label>
+                <div class="custom-multiselect" id="categoryMultiselect">
+                    <div class="multiselect-selected" onclick="toggleDropdown('categoryMultiselect')">
+                        <span class="selected-text">All Categories</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="multiselect-options">
+                        {% for category in categories %}
+                            <label class="multiselect-option">
+                                <input type="checkbox" name="category_filter" value="{{ category }}" 
+                                    {% if category in selected_categories %}checked{% endif %}
+                                    onchange="updateSelectedText('categoryMultiselect')">
+                                <span>{{ category }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="filter-row">
+            <div class="filter-group">
+                <label for="date_from">From Date:</label>
+                <input type="date" name="date_from" id="date_from" value="{{ date_from or '' }}">
+            </div>
+            
+            <div class="filter-group">
+                <label for="date_to">To Date:</label>
+                <input type="date" name="date_to" id="date_to" value="{{ date_to or '' }}">
+            </div>
+        </div>
+        
+        <div class="filter-actions">
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+            <a href="{{ url_for('view_events') }}" class="btn btn-secondary">Clear Filters</a>
+        </div>
+    </form>
+</div>
+
+<div class="events-grid">
+    {% if events %}
+        {% for event in events %}
+            <div class="event-card">
+                <div class="event-header">
+                    <h3 class="event-title">{{ event.event_name }}</h3>
+                    <span class="event-category">{{ event.category }}</span>
+                </div>
+                
+                <div class="event-body">
+                    <p class="event-description">{{ event.description }}</p>
+                    
+                    <div class="event-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>{{ event.formatted_date }}</span>
+                        </div>
+                        
+                        <div class="meta-item">
+                            <i class="fas fa-university"></i>
+                            <span>{{ event.college_name }}</span>
+                        </div>
+                        
+                        {% if event.requirements %}
+                            <div class="meta-item">
+                                <i class="fas fa-tools"></i>
+                                <span>{{ event.requirements }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="event-footer">
+                    <a href="{{ event.location }}" target="_blank" class="btn btn-outline">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Location
+                    </a>
+                    <a href="{{ event.registration_link }}" target="_blank" class="btn btn-primary">
+                        <i class="fas fa-external-link-alt"></i>
+                        Register
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-events">
+            <i class="fas fa-calendar-times"></i>
+            <h3>No Events Found</h3>
+            <p>No events match your current filters. Try adjusting your search criteria.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/events.js') }}"></script>
+{% endblock %}
