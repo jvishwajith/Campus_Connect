@@ -100,7 +100,7 @@ function validatePasswordStrength(password) {
     
     passwordInput.style.borderColor = 'var(--success)';
     return true;
-});
+};
 
 function showError(message) {
     showFlashMessage(message, 'error');
