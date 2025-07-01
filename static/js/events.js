@@ -17,6 +17,32 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Add change listeners to filter inputs for auto-submission
+    const collegeFilter = document.getElementById('college_filter');
+    const dateFromFilter = document.getElementById('date_from');
+    const dateToFilter = document.getElementById('date_to');
+    
+    if (collegeFilter) {
+        collegeFilter.addEventListener('change', applyFilters);
+    }
+    
+    if (dateFromFilter) {
+        dateFromFilter.addEventListener('change', applyFilters);
+    }
+    
+    if (dateToFilter) {
+        dateToFilter.addEventListener('change', applyFilters);
+    }
+    
+    // For category checkboxes, apply filters when changed
+    const categoryCheckboxes = document.querySelectorAll('input[name="category_filter"]');
+    categoryCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateSelectedText('categoryMultiselect');
+            setTimeout(applyFilters, 100); // Small delay to allow UI update
+        });
+    });
+
     // Date validation for event forms
     const eventDateInput = document.getElementById('event_date');
     if (eventDateInput) {
@@ -150,7 +176,18 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.transform = 'translateY(0)';
         });
     });
+
+    // Initialize selected text on page load
+    updateSelectedText('categoryMultiselect');
 });
+
+// Function to handle filter changes and submit form
+function applyFilters() {
+    const form = document.querySelector('.search-form');
+    if (form) {
+        form.submit();
+    }
+}
 
 // URL validation functions
 function isValidURL(string) {
@@ -235,8 +272,12 @@ function toggleDropdown(selectId) {
 // Update selected text based on checked options
 function updateSelectedText(selectId) {
     const multiselect = document.getElementById(selectId);
+    if (!multiselect) return;
+    
     const checkboxes = multiselect.querySelectorAll('input[type="checkbox"]:checked');
     const selectedText = multiselect.querySelector('.selected-text');
+    
+    if (!selectedText) return;
     
     if (checkboxes.length === 0) {
         selectedText.textContent = 'All Categories';
@@ -259,9 +300,4 @@ document.addEventListener('click', function(event) {
             multiselect.querySelector('.multiselect-options').classList.remove('active');
         }
     });
-});
-
-// Initialize selected text on page load
-document.addEventListener('DOMContentLoaded', function() {
-    updateSelectedText('categoryMultiselect');
 });
