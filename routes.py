@@ -147,31 +147,37 @@ def search_events():
     date_to = request.args.get('date_to')
     
     events = []
+    
+    # If there's a search query, start with search results
     if query:
         events = Event.search_events(query)
-        
-        # Apply additional filters if provided
+    else:
+        # If no query but filters are applied, get all events
         if any([college_filter, category_filter, date_from, date_to]):
-            filtered_events = []
-            for event in events:
-                include_event = True
-                
-                if college_filter and event.college_name != college_filter:
-                    include_event = False
-                
-                if category_filter and event.category not in category_filter:
-                    include_event = False
-                
-                if date_from and event.event_date < date_from:
-                    include_event = False
-                
-                if date_to and event.event_date > date_to:
-                    include_event = False
-                
-                if include_event:
-                    filtered_events.append(event)
+            events = Event.get_all_events()
+    
+    # Apply additional filters if any events exist
+    if events and any([college_filter, category_filter, date_from, date_to]):
+        filtered_events = []
+        for event in events:
+            include_event = True
             
-            events = filtered_events
+            if college_filter and event.college_name != college_filter:
+                include_event = False
+            
+            if category_filter and event.category not in category_filter:
+                include_event = False
+            
+            if date_from and event.event_date < date_from:
+                include_event = False
+            
+            if date_to and event.event_date > date_to:
+                include_event = False
+            
+            if include_event:
+                filtered_events.append(event)
+        
+        events = filtered_events
     
     # Format dates for display
     for event in events:
